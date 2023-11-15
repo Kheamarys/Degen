@@ -1,0 +1,58 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
+
+import "@openzeppelin/contracts@4.9.0/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts@4.9.0/access/Ownable.sol";
+import "@openzeppelin/contracts@4.9.0/utils/math/SafeMath.sol";
+
+contract DegenToken is ERC20, Ownable {
+    using SafeMath for uint256;
+
+    enum ItemType { None, Naruto, Deku, Kirito, Asuna }
+
+    mapping(address => ItemType) public userInventory;
+
+    event ItemReceived(address indexed recipient, ItemType itemType);
+    event Log(string message);
+
+    constructor() ERC20("Degen", "DGN") {}
+
+    function mint(uint256 amount) public {
+        _mint(msg.sender, amount);
+    }
+
+    function burn(uint256 amount) public {
+        _burn(msg.sender, amount);
+    }
+
+    function transfer(address to, uint256 amount) public override returns (bool) {
+        _transfer(msg.sender, to, amount);
+        return true;
+    }
+
+    function requestAndReceiveRandomItem() public {
+        require(balanceOf(msg.sender) >= 50, "Not enough tokens to request an item");
+        burn(50);
+        ItemType randomItem = getRandomItem();
+        userInventory[msg.sender] = randomItem;
+        emit ItemReceived(msg.sender, randomItem);
+    }
+
+    function getRandomItem() internal returns (ItemType) {
+        uint256 randomNumber = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 4;
+
+        if (randomNumber == 0) {
+            emit Log("Got Naruto");
+            return ItemType.Naruto;
+        } else if (randomNumber == 1) {
+            emit Log("Got Deku");
+            return ItemType.Deku;
+        } else if (randomNumber == 2) {
+            emit Log("Got Kirito");
+            return ItemType.Kirito;
+        } else {
+            emit Log("Got Asuna");
+            return ItemType.Asuna;
+        }
+    }
+}
