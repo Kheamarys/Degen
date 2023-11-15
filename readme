@@ -1,0 +1,65 @@
+# DegenToken
+
+## Overview
+
+DegenToken is an ERC20-compliant token smart contract written in Solidity. The contract extends the OpenZeppelin ERC20 contract and includes additional functionality for managing an inventory of items. Users can mint and burn tokens, transfer them to other addresses, and request random items from the contract's inventory.
+
+## Contract Details
+
+### Functions
+
+#### `constructor()`
+
+- Initializes the contract with the name "Degen" (symbol "DGN").
+- Parameters:
+  - None
+
+#### `mint(uint256 amount)`
+
+- Function allowing any user to mint (create) new DegenTokens.
+- Parameters:
+  - `amount` (uint256): The amount of tokens to mint.
+
+#### `burn(uint256 amount)`
+
+- Function allowing any user to burn (destroy) a specific amount of DegenTokens.
+- Parameters:
+  - `amount` (uint256): The amount of tokens to burn.
+
+#### `transfer(address to, uint256 amount)`
+
+- Overrides the standard `transfer` function to add flexibility and custom functionality.
+- Parameters:
+  - `to` (address): The address to which the tokens will be transferred.
+  - `amount` (uint256): The amount of tokens to transfer.
+- Returns:
+  - `success` (bool): Indicates whether the transfer was successful.
+
+#### `requestAndReceiveRandomItem()`
+
+- Function allowing users to request and receive a random item from the contract's inventory using DegenTokens.
+- Modifiers:
+  - Requires the user to have at least 50 DegenTokens to request an item.
+- Emits:
+  - `ItemReceived` event with the recipient's address and the received item type.
+
+#### `getRandomItem()`
+
+- Internal function that generates a random item based on block information and user address.
+- Returns:
+  - `ItemType`: The randomly generated item type.
+
+### Events
+
+#### `ItemReceived(address indexed recipient, ItemType itemType)`
+
+- Emits when a user receives a random item from the contract's inventory.
+- Parameters:
+  - `recipient` (address): The address of the user who received the item.
+  - `itemType` (ItemType): The type of item received.
+
+#### `Log(string message)`
+
+- Emits a log message for debugging purposes.
+- Parameters:
+  - `message` (string): The log message.
